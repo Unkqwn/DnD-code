@@ -1,0 +1,19 @@
+{
+    "Stats":
+    {
+        "Strength": 3,
+        "Dexterity": 1,
+        "Constitution": 2,
+        "Intelligence": 0,
+        "Wisdom": 1,
+        "Charisma": -1
+    },
+    "Skills":
+    {
+        "Athletics": 5,
+        "Acrobatics": 3,
+        "Stealth": 4,
+        "Arcana": 2,
+        "History": 1
+    }
+}
