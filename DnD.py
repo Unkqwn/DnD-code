@@ -12,12 +12,12 @@ def creation_flow():
         if not handle_yes_no("Create another category?"):
             break
 
-def load_options(options):
+def load_options(options, type):
     '''
     Displays a list of options to the user.
     '''
     
-    print("C. Create new stats file")
+    print(f"C. Create {type}")
     print("0. Exit")
     
     if all(isinstance(opt, str) for opt in options):
@@ -40,17 +40,41 @@ def handle_yes_no(prompt):
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
 
-def handle_choice(options, create_option=False):
+def handle_choice(options, type):
     '''
-    Gets a users choice from a list of options and handles
+    Gets a user's choice from a list of options and handles creation logic.
     '''
-    
     while True:
+        load_options(options, type)
         choice = input("Please enter your choice (Either name or number): ").strip().lower()
 
-        if create_option and choice == "c":
-            creation_flow()
-            return None
+        if choice == "c":
+            if type == "file":
+                creation_flow()
+                return None
+
+            elif type == "category":
+                while True:
+                    new_category = FM.create_new_category(open_file)
+                    print(f"Category '{new_category}' created.")
+
+                    if handle_yes_no("Would you like to add a stat to this new category?"):
+                        while True:
+                            FM.create_new_stat(open_file, new_category)
+                            if not handle_yes_no("Create another stat?"):
+                                break
+
+                    if not handle_yes_no("Would you like to create another category?"):
+                        break
+                return None
+
+            elif type == "stat":
+                while True:
+                    FM.create_new_stat(open_file, open_category)
+                    if not handle_yes_no("Create another stat?"):
+                        break
+                return None
+
         if choice == "0" or choice == "exit":
             print("Exiting program. Goodbye!")
             exit()
@@ -60,6 +84,7 @@ def handle_choice(options, create_option=False):
             if 0 <= index < len(options):
                 return options[index]
             print("Invalid selection. Please try again.")
+
         else:
             matches = []
             if all(isinstance(opt, str) for opt in options):
@@ -78,40 +103,40 @@ def roll_dice(stat_value, sides=20):
     return total
 
 def main():
+    global open_file, open_category
     print("Welcome to the DnD sheet manager/roller!")
 
     while True:
-        files = FM.check_folder()
+        open_file = FM.check_folder()
 
         print("\nChoose a stat file to load:")
-        load_options(files)
-        selected_file = handle_choice(files, create_option=True)
+        selected_file = handle_choice(open_file, "file")
         if selected_file is None:
             continue
-
-        stats = FM.load_file(selected_file)
-        if not stats:
+        
+        open_file = selected_file
+        file_contents = FM.load_file(selected_file)
+        if not file_contents:
             print("This file has no categories yet.")
             continue
 
         print("\nChoose a category:")
-        categories = list(stats.keys())
-        load_options(categories)
-        selected_category = handle_choice(categories)
+        categories = list(file_contents.keys())
+        selected_category = handle_choice(categories, "category")
         if selected_category is None:
             continue
-
-        stat_names = list(stats[selected_category].keys())
-        print(f"\nChoose a stat from '{selected_category}':")
-        load_options(stat_names)
-        selected_stat = handle_choice(stat_names)
+        
+        open_category = selected_category
+        stat_names = list(file_contents[selected_category].keys())
+        print(f"\nChoose what to do from '{selected_category}':")
+        selected_stat = handle_choice(stat_names, "stat")
         if selected_stat is None:
             continue
 
-        if not isinstance(stats[selected_category][selected_stat], int):
-            print(f"Your selected option is {stats[selected_category][selected_stat]}.")
+        if not isinstance(file_contents[selected_category][selected_stat], int):
+            print(f"Your selected option is {file_contents[selected_category][selected_stat]}.")
             continue
-        roll_dice(stats[selected_category][selected_stat])
+        roll_dice(file_contents[selected_category][selected_stat])
 
 if __name__ == "__main__":
     main()

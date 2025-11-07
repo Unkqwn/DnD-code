@@ -1,6 +1,5 @@
 {
-    "Stats":
-    {
+    "Stats": {
         "Strength": 3,
         "Dexterity": 1,
         "Constitution": 2,
@@ -8,12 +7,19 @@
         "Wisdom": 1,
         "Charisma": -1
     },
-    "Skills":
-    {
+    "Skills": {
         "Athletics": 5,
         "Acrobatics": 3,
         "Stealth": 4,
         "Arcana": 2,
         "History": 1
+    },
+    "Attacks": {
+        "Sword": 5,
+        "Dagger": 3,
+        "Fireball": "Roll 4d6"
+    },
+    "Tools": {
+        "Tinker's tools": 5
     }
 }
