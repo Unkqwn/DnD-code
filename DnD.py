@@ -19,6 +19,9 @@ def load_options(options, type):
     
     print(f"C. Create {type}")
     print("0. Exit")
+
+    if type != "file":
+        print("S. Search file")
     
     if all(isinstance(opt, str) for opt in options):
         for i, opt in enumerate(options, start=1):
@@ -52,22 +55,18 @@ def handle_choice(options, type):
             if type == "file":
                 creation_flow()
                 return None
-
             elif type == "category":
                 while True:
                     new_category = FM.create_new_category(open_file)
                     print(f"Category '{new_category}' created.")
-
                     if handle_yes_no("Would you like to add a stat to this new category?"):
                         while True:
                             FM.create_new_stat(open_file, new_category)
                             if not handle_yes_no("Create another stat?"):
                                 break
-
                     if not handle_yes_no("Would you like to create another category?"):
                         break
                 return None
-
             elif type == "stat":
                 while True:
                     FM.create_new_stat(open_file, open_category)
@@ -78,6 +77,10 @@ def handle_choice(options, type):
         if choice == "0" or choice == "exit":
             print("Exiting program. Goodbye!")
             exit()
+
+        if choice == "s" and type != "file":
+            search_term = input("Enter search term: ").strip().lower()
+            FM.search_files(open_file, search_term)
 
         if choice.isdigit():
             index = int(choice) - 1

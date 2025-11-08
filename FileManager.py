@@ -3,6 +3,8 @@ from pathlib import Path
 
 folder_path = Path("C:/users/Unkqw/DnD Code/Stat sheets")
 
+file_list = []
+
 def check_folder():
     files = [f for f in folder_path.iterdir() if f.is_file() and f.suffix == ".json"]
 
@@ -13,7 +15,7 @@ def check_folder():
     else:
         return files
 
-def create_new_file():
+def create_new_file(file_type=".json"):
     '''
     Creates a new stats file in the designated folder.
     '''
@@ -21,7 +23,7 @@ def create_new_file():
     new_filename = input("Enter new filename: ").strip()
 
     if not new_filename.lower().endswith(".json"):
-        new_filename += ".json"
+        new_filename += file_type
 
     new_file = folder_path / new_filename
 
@@ -79,6 +81,40 @@ def create_new_stat(file, category):
 
     print(f"Stat '{new_stat}' with value {stat_value} added to category '{category}' in '{file.name}'.")
     return new_stat
+
+def search_files(file, search_term):
+    '''
+    Searches the given file for a term and returns matching stats.
+    '''
+    data = load_file(file)
+    search_term = search_term.lower()
+    results = {}
+
+    if not data:
+        print(f"No data found in '{file.name}'.")
+        return None
+    
+    for category, stats in data.items():
+        category_match = category.lower() == search_term
+        stats_match = {}
+
+        for stat, value in stats.items():
+            if (search_term in stat.lower()) or (str(value).lower() == search_term):
+                stats_match[stat] = value
+
+        if category_match or stats_match:
+            results[category] = stats_match if stats_match else stats
+
+    if results:
+        print(f"Search results for '{search_term}' in '{file.name}':")
+        for cat, stats in results.items():
+            print(f"\n[{cat}]")
+            for stat, value in stats.items():
+                print(f"  {stat}: {value}")
+    else:
+        print(f"No matches found for '{search_term}' in '{file.name}'.")
+
+    return value
 
 def load_file(filename):
     try:
