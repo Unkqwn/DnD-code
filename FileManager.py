@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
 
-folder_path = Path("C:/users/Unkqw/DnD Code/Stat sheets")
+script_dir = Path(__file__).resolve().parent
+folder_path = script_dir / "Stat sheets"
+folder_path.mkdir(exist_ok=True)
 
-file_list = []
-
-def check_folder():
-    files = [f for f in folder_path.iterdir() if f.is_file() and f.suffix == ".json"]
+def check_folder(type=".json"):
+    files = [f for f in folder_path.iterdir() if f.is_file() and f.suffix == type]
 
     if not files:
         print("No stat files found. Please create your first stats file.")
